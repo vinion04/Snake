@@ -1,6 +1,7 @@
-package Java.Snake;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Scanner;
+
 /*
  * Input from the player,
  * display the board,
@@ -18,24 +19,25 @@ public class Game {
     private String[][] board;
 
     //directions
-    private int[] up = new int[]{0,1};
-    private int[] down = new int[]{0, -1};
+    private int[] up = new int[]{0, -1};
+    private int[] down = new int[]{0, 1};
     private int[] left = new int[]{-1, 0};
     private int[] right = new int[]{1, 0};
-
 
     //initializer 
     public Game(int height, int width){
         this.height = height;
         this.width = width;
 
+        //initialize snake body
         List<int[]> initialBody = new ArrayList<>();
         initialBody.add(new int[]{0,0});
         initialBody.add(new int[]{1,0});
         initialBody.add(new int[]{2,0});
         initialBody.add(new int[]{3,0});
 
-        this.snake = new Snake(initialBody, up);
+        this.snake = new Snake(initialBody, down);
+
     }
 
     //create matrix
@@ -85,8 +87,59 @@ public class Game {
         System.out.println("+");
     }
 
+    //listen for key pressed
+    public void readKey(String key){
+        if(key.equals("w")){
+            moveSnake(up);
+        }
+        else if(key.equals("a")){
+            moveSnake(left);
+        }
+        else if(key.equals("s")){
+            moveSnake(down);
+        }
+        else if(key.equals("d")){
+            moveSnake(right);
+        }
+    }
+
+    public void moveSnake(int[] direction){
+        int[] newDirection = direction;
+        //set new direction
+        snake.setDirection(newDirection);
+        //get current head
+        int[] currentHead = snake.head();
+        //calculate new head position
+        int[] newHead = new int[]{
+            currentHead[0] + newDirection[0],
+            currentHead[1] + newDirection[1]
+        };
+        //take step with new head position
+        snake.takeStep(newHead);
+    }
+
     public static void main(String[] args){
         Game game = new Game(10, 20);
         game.render();
+        
+        Scanner scanner = new Scanner(System.in);
+        String input;
+        String key;
+
+        while(true){
+            System.out.println("Press WASD to move");
+            key = scanner.nextLine();
+            game.readKey(key);
+            System.out.println("Press ENTER to move or EXIT to quit");
+            input = scanner.nextLine();
+
+            if(input.isEmpty()){
+                game.render();
+            }
+            else if(input.equalsIgnoreCase("exit")){
+                break;
+            }
+        }
+        scanner.close();
     }
 }
