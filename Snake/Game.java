@@ -9,6 +9,9 @@ import java.util.Scanner;
  * manage everything else
  */
 public class Game {
+
+    //debugger
+    boolean DEBUG = true;
     
     //variables
     private int height;
@@ -105,8 +108,6 @@ public class Game {
 
     public void moveSnake(int[] direction){
         int[] newDirection = direction;
-        //set new direction
-        snake.setDirection(newDirection);
         //get current head
         int[] currentHead = snake.head();
         //calculate new head position
@@ -114,8 +115,25 @@ public class Game {
             currentHead[0] + newDirection[0],
             currentHead[1] + newDirection[1]
         };
-        //take step with new head position
-        snake.takeStep(newHead);
+
+        //if new head direction is in bounds, move
+        if(isInBounds(board, newHead[0], newHead[1])){
+            if(DEBUG) System.out.println("No wall ahead");
+            //set new direction
+            snake.setDirection(newDirection);
+            //take step with new head position
+            snake.takeStep(newHead);
+        } else if(DEBUG)System.out.println("Wall ahead");
+    }
+
+    public static boolean isInBounds(String[][] board, int row, int col){
+        if(row < 0 || row >= board.length)
+            return false;
+        
+        if(col < 0 || col >=board.length)
+            return false;
+        
+        return true;
     }
 
     public static void main(String[] args){
